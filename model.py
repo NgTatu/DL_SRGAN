@@ -34,7 +34,7 @@ class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
         self.conv1 = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=3, padding=4),
+            nn.Conv2d(3, 64, kernel_size=9, padding=4),
             nn.PReLU()
         )
         self.residual_blocks = nn.Sequential(
@@ -54,7 +54,7 @@ class Generator(nn.Module):
             UpsampleBlock(64,2),
             UpsampleBlock(64,2)
         )
-        self.conv3 = nn.Conv2d(64, 9, kernel_size=9, padding=4)
+        self.conv3 = nn.Conv2d(64, 3, kernel_size=9, padding=4)
 
     def forward(self, x):
         x_conv1 = self.conv1(x)
