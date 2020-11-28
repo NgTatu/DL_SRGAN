@@ -28,9 +28,9 @@ def data_lr_transform(crop_size, upscale_factor):
     ])
 
 
-class GetDataSet(Dataset):
+class DataSetFromFolder(Dataset):
     def __init__(self, hr_data_dir, lr_data_dir, crop_size, upscale_factor):
-        super(GetDataSet, self).__init__()
+        super(DataSetFromFolder, self).__init__()
         self.hr_image_filenames = [join(hr_data_dir, x) for x in np.sort(listdir(hr_data_dir)) if is_image_file(x)]
         self.lr_image_filenames = [join(lr_data_dir, x) for x in np.sort(listdir(lr_data_dir)) if is_image_file(x)]
         crop_size = calculate_crop_size(crop_size, upscale_factor) #upscale_factor is 4
