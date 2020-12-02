@@ -1,6 +1,7 @@
 import torch
 from torch import nn
-
+import math
+from CONFIG import *
 
 class ResidualBlock(nn.Module):
     def __init__(self, channels):
@@ -75,15 +76,17 @@ class ResidualBlocks2(nn.Module):
         )
 
     def forward(self, x):
-        return x + self.residual_block_2(x)
+        return self.residual_block_2(x)
 
 
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
-        self.discriminator_network = nn.Sequential(
+        self.conv1 = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=3, padding=1),
-            nn.LeakyReLU(),
+            nn.LeakyReLU()
+        )
+        self.conv_block = nn.Sequential(
             ResidualBlocks2(64, 64, 2),
             ResidualBlocks2(64, 128, 1),
             ResidualBlocks2(128, 128, 2),
@@ -91,14 +94,16 @@ class Discriminator(nn.Module):
             ResidualBlocks2(256, 256, 2),
             ResidualBlocks2(256, 512, 1),
             ResidualBlocks2(512, 512, 2),
-            nn.Linear(512, 1024),
+            )
+
+        self.fc = nn.Sequential(
+            nn.Linear(in_features=512*(math.ceil(HR_CROP_SIZE/16))**2, out_features=1024),
             nn.LeakyReLU(),
             nn.Linear(1024, 1)
         )
 
     def forward(self, x):
-        return torch.sigmoid(self.discriminator_network(x))
-
-
-
-
+        x = self.conv1(x)
+        x = self.conv_block(x)
+        x = x.flatten(start_dim = 1)
+        return torch.sigmoid(self.fc(x))
