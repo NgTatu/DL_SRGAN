@@ -7,6 +7,7 @@ BATCH_SIZE = 8
 MODEL_CHECKPOINT_PATH = '/content/DL_SRGAN/model/'
 PATH_MODEL_G = MODEL_CHECKPOINT_PATH + 'G.pt'
 PATH_MODEL_D = MODEL_CHECKPOINT_PATH + 'D.pt'
+SR_PATH = '/content/DL_SRGAN/SR_images/'
 
 TRAIN_HR_DIR = '/home/tuan/Documents/VBDI/SRGAN/data/DIV2K_train_HR'
 TRAIN_LR_DIR = '/home/tuan/Documents/VBDI/SRGAN/data/DIV2K_train_LR_bicubic_X4/DIV2K_train_LR_bicubic/X4'
