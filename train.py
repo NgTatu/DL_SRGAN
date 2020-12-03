@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 from loss import PerceptualLoss
 import torch.nn as nn
 from pathlib import Path
+import os
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device: ", str(device))
@@ -39,7 +40,7 @@ def train(resume_training = True):
     optimizerD = optim.Adam(D.parameters())
 
     ## Load checkpoint
-    if resume_training and PATH_G.exists() and PATH_D.exists():
+    if resume_training and PATH_G.exists() and PATH_D.exists() and os.path.getsize(PATH_G) > 0 and os.path.getsize(PATH_D) > 0:
         G, D, optimizerG, optimizerD, last_epoch = load_checkpoint(G,D, optimizerG, optimizerD)
         print("Continue training from last checkpoint...")
     else:
