@@ -81,7 +81,7 @@ def train(resume_training = True):
     # For each epoch
     for epoch in range(last_epoch, NUM_EPOCHS):
         ### Save checkpoint
-        save_checkpoint(epoch, G, D, optimizerG, optimizerD)
+        # save_checkpoint(epoch, G, D, optimizerG, optimizerD)
         for i, data in enumerate(train_loader):
             # data[0] is 1 batch of HR images
             # data[1] is 1 batch of LR images
@@ -145,6 +145,7 @@ def train(resume_training = True):
             ## Free up GPA memory
             del train_hr_batch, train_lr_batch, errD, errG, real_labels, fake_labels, output_real, output_fake, sr_image
             torch.cuda.empty_cache()
+        save_checkpoint(epoch, G, D, optimizerG, optimizerD)
 
 
 
