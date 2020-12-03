@@ -22,7 +22,7 @@ def gen_save_img(lr_path, name_of_img, save_path):
 
 
 if __name__ == '__main__':
-    LR_PATH = TRAIN_HR_DIR+'/'
+    LR_PATH = TRAIN_LR_DIR+'/'
     PATH_G = PATH_MODEL_G
     SAVE_PATH = SR_PATH
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
