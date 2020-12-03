@@ -50,6 +50,7 @@ def train(resume_training = True):
             pass
         with open(PATH_D, 'w') as fp:
             pass
+        print('No prior checkpoint existed, created new save files for checkpoint.')
         G.apply(xavier_init_weights)
         D.apply(xavier_init_weights)
         last_epoch = 0
