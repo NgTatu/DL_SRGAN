@@ -85,8 +85,6 @@ def train(resume_training = True):
         for i, data in enumerate(train_loader):
             # data[0] is 1 batch of HR images
             # data[1] is 1 batch of LR images
-            #             print(f"\tBatch: {i}/{len(train_hr_loader)//BATCH_SIZE}")
-            print(f"\tBatch: {i}/{len(train_loader)}")
 
             ########################
             # (1) Update Discriminator (D): maximum log(D(x)) + log(1 - D(G(z)))
@@ -140,8 +138,7 @@ def train(resume_training = True):
             G_losses.append(errG.item())
             D_losses.append(errD.item())
             # Output training stats
-            if i % 50 == 0:
-                print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
+            print('Epoch: [%d/%d] - Batch: [%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
                       % (epoch, NUM_EPOCHS, i, len(train_loader),
                          errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
 
