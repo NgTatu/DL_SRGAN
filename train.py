@@ -44,6 +44,10 @@ def train(resume_training = True):
         G, D, optimizerG, optimizerD, last_epoch = load_checkpoint(G,D, optimizerG, optimizerD)
         print("Continue training from last checkpoint...")
     else:
+        with open(PATH_G, 'w') as fp:
+            pass
+        with open(PATH_D, 'w') as fp:
+            pass
         G.apply(xavier_init_weights)
         D.apply(xavier_init_weights)
         last_epoch = 0
