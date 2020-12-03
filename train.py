@@ -11,8 +11,8 @@ from pathlib import Path
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device: ", str(device))
 
-PATH_G = Path('/model/G.pt')
-PATH_D = Path('/model/D.pt')
+PATH_G = Path(PATH_MODEL_G)
+PATH_D = Path(PATH_MODEL_D)
 
 
 def load_data():
