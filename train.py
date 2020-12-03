@@ -72,6 +72,8 @@ def train(resume_training = True):
     print("Starting Training loop...")
     # For each epoch
     for epoch in range(last_epoch, NUM_EPOCHS):
+        ### Save checkpoint
+        save_checkpoint(epoch, G, D, optimizerG, optimizerD)
         for i, data in enumerate(train_loader):
             # data[0] is 1 batch of HR images
             # data[1] is 1 batch of LR images
@@ -139,26 +141,26 @@ def train(resume_training = True):
             del train_hr_batch, train_lr_batch, errD, errG, real_labels, fake_labels, output_real, output_fake, sr_image
             torch.cuda.empty_cache()
 
-        ### Save checkpoint
-        save_checkpoint(epoch, G, D, optimizerG, optimizerD, errG.item(), errD.item())
 
-def save_checkpoint(epoch, G, D, optimizerG, optimizerD, lossG, lossD):
+
+def save_checkpoint(epoch, G, D, optimizerG, optimizerD):
     checkpoint_G = {
         'epoch': epoch,
         'model': G,
         'model_state_dict': G.state_dict(),
         'optimizer_state_dict': optimizerG.state_dict(),
-        'loss': lossG
+        # 'loss': lossG
     }
     checkpoint_D = {
         'epoch': epoch,
         'model': D,
         'model_state_dict': D.state_dict(),
         'optimizer_state_dict': optimizerD.state_dict(),
-        'loss': lossD
+        # 'loss': lossD
     }
     torch.save(checkpoint_G, PATH_G)
     torch.save(checkpoint_D, PATH_D)
+    print("Save checkpoint successfully!")
 
 
 def load_checkpoint(G, D, optimizerG, optimizerD):
