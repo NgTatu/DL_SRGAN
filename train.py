@@ -168,14 +168,14 @@ def load_checkpoint(G, D, optimizerG, optimizerD):
     checkpoint_G = torch.load(PATH_G)
     G.load_state_dict(checkpoint_G['model_state_dict'])
     optimizerG.load_state_dict(checkpoint_G['optimizer_state_dict'])
-    loss_G =checkpoint_G['loss']
+    # loss_G =checkpoint_G['loss']
     checkpoint_D = torch.load(PATH_D)
     D.load_state_dict(checkpoint_D['model_state_dict'])
     optimizerD.load_state_dict(checkpoint_D['optimizer_state_dict'])
-    loss_D = checkpoint_D['loss']
+    # loss_D = checkpoint_D['loss']
     epoch = checkpoint_G['epoch']
 
-    print('Load checkpoint successfully!')
+    print('Load checkpoint successfully! Last epoch: '+str(epoch))
     return G,D,optimizerG,optimizerD,epoch
 
 
