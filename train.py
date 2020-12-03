@@ -14,7 +14,7 @@ print("Device: ", str(device))
 
 PATH_G = Path(PATH_MODEL_G)
 PATH_D = Path(PATH_MODEL_D)
-
+checkpoint_path = MODEL_CHECKPOINT_PATH
 
 def load_data():
     train_set = DataSetFromFolder(TRAIN_HR_DIR, TRAIN_LR_DIR, HR_CROP_SIZE, UPSCALE_FACTOR)
@@ -44,6 +44,8 @@ def train(resume_training = True):
         G, D, optimizerG, optimizerD, last_epoch = load_checkpoint(G,D, optimizerG, optimizerD)
         print("Continue training from last checkpoint...")
     else:
+        if not os.path.exists(checkpoint_path):
+            os.makedirs(checkpoint_path)
         with open(PATH_G, 'w') as fp:
             pass
         with open(PATH_D, 'w') as fp:
@@ -179,7 +181,7 @@ def load_checkpoint(G, D, optimizerG, optimizerD):
     # loss_D = checkpoint_D['loss']
     epoch = checkpoint_G['epoch']
 
-    print('Load checkpoint successfully! Last epoch: '+str(epoch))
+    print('Load checkpoint successfully! Start training from epoch: '+str(epoch))
     return G,D,optimizerG,optimizerD,epoch
 
 
