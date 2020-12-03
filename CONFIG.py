@@ -4,7 +4,7 @@ UPSCALE_FACTOR = 4
 NUM_EPOCHS = 20
 BATCH_SIZE = 8
 
-MODEL_CHECKPOINT_PATH = '/content/DL_SRGAN/model/'
+MODEL_CHECKPOINT_PATH = '/content/drive/My Drive/srgan/model/'
 PATH_MODEL_G = MODEL_CHECKPOINT_PATH + 'G.pt'
 PATH_MODEL_D = MODEL_CHECKPOINT_PATH + 'D.pt'
 SR_PATH = '/content/DL_SRGAN/SR_images/'
