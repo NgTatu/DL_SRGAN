@@ -6,8 +6,13 @@ from CONFIG import *
 from torch.utils.data import DataLoader
 from loss import PerceptualLoss
 import torch.nn as nn
+from pathlib import Path
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Device: ", str(device))
+
+PATH_G = Path('/model/G.pt')
+PATH_D = Path('/model/D.pt')
 
 
 def load_data():
@@ -22,16 +27,26 @@ def xavier_init_weights(model):
     if isinstance(model, torch.nn.Linear) or isinstance(model, torch.nn.Conv2d):
         torch.nn.init.xavier_uniform_(model.weight)
 
-def train():
+def train(resume_training = True):
 
     ### Load data
     train_loader, val_loader = load_data()
 
     ### Load model
     G = Generator().to(device)
-    G.apply(xavier_init_weights)
     D = Discriminator().to(device)
-    D.apply(xavier_init_weights)
+    optimizerG = optim.Adam(G.parameters())
+    optimizerD = optim.Adam(D.parameters())
+
+    ## Load checkpoint
+    if resume_training and PATH_G.exists() and PATH_D.exists():
+        G, D, optimizerG, optimizerD, last_epoch = load_checkpoint(G,D, optimizerG, optimizerD)
+        print("Continue training from last checkpoint...")
+    else:
+        G.apply(xavier_init_weights)
+        D.apply(xavier_init_weights)
+        last_epoch = 0
+
 
     ## Initialize Loss functions
     criterion = nn.BCELoss()
@@ -41,8 +56,7 @@ def train():
     real_label = 1.0
     fake_label = 0.0
 
-    optimizerG = optim.Adam(G.parameters())
-    optimizerD = optim.Adam(D.parameters())
+
 
     ### Train
     G.train()
@@ -57,7 +71,7 @@ def train():
 
     print("Starting Training loop...")
     # For each epoch
-    for epoch in range(NUM_EPOCHS):
+    for epoch in range(last_epoch, NUM_EPOCHS):
         for i, data in enumerate(train_loader):
             # data[0] is 1 batch of HR images
             # data[1] is 1 batch of LR images
@@ -124,6 +138,45 @@ def train():
             ## Free up GPA memory
             del train_hr_batch, train_lr_batch, errD, errG, real_labels, fake_labels, output_real, output_fake, sr_image
             torch.cuda.empty_cache()
+
+        ### Save checkpoint
+        save_checkpoint(epoch, G, D, optimizerG, optimizerD, errG.item(), errD.item())
+
+def save_checkpoint(epoch, G, D, optimizerG, optimizerD, lossG, lossD):
+    checkpoint_G = {
+        'epoch': epoch,
+        'model': G,
+        'model_state_dict': G.state_dict(),
+        'optimizer_state_dict': optimizerG.state_dict(),
+        'loss': lossG
+    }
+    checkpoint_D = {
+        'epoch': epoch,
+        'model': D,
+        'model_state_dict': D.state_dict(),
+        'optimizer_state_dict': optimizerD.state_dict(),
+        'loss': lossD
+    }
+    torch.save(checkpoint_G, PATH_G)
+    torch.save(checkpoint_D, PATH_D)
+
+
+def load_checkpoint(G, D, optimizerG, optimizerD):
+    checkpoint_G = torch.load(PATH_G)
+    G.load_state_dict(checkpoint_G['model_state_dict'])
+    optimizerG.load_state_dict(checkpoint_G['optimizer_state_dict'])
+    loss_G =checkpoint_G['loss']
+    checkpoint_D = torch.load(PATH_D)
+    D.load_state_dict(checkpoint_D['model_state_dict'])
+    optimizerD.load_state_dict(checkpoint_D['optimizer_state_dict'])
+    loss_D = checkpoint_D['loss']
+    epoch = checkpoint_G['epoch']
+
+    print('Load checkpoint successfully!')
+    return G,D,optimizerG,optimizerD,epoch
+
+
+
 
 
 if __name__ == '__main__':
