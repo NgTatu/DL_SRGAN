@@ -138,9 +138,9 @@ def train(resume_training = True):
             G_losses.append(errG.item())
             D_losses.append(errD.item())
             # Output training stats
-            print('Epoch: [%d/%d] - Batch: [%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
+            print('Epoch: [%d/%d] - Batch: [%d/%d]\tLoss_D: %.4f Loss_D_real: %.4f-Loss_D_fake: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
                       % (epoch, NUM_EPOCHS, i, len(train_loader),
-                         errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
+                         errD.item(), errD_real.item(), errD_fake.item(), errG.item(), D_x, D_G_z1, D_G_z2))
 
             ## Free up GPA memory
             del train_hr_batch, train_lr_batch, errD, errG, real_labels, fake_labels, output_real, output_fake, sr_image

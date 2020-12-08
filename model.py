@@ -63,7 +63,8 @@ class Generator(nn.Module):
         x_conv2 = self.conv2(x_residual_blocks)
         x_upsample_blocks = self.upsample_blocks(x_conv1 + x_conv2)
         x_conv3 = self.conv3(x_upsample_blocks)
-        return (torch.tanh(x_conv3)+1)/2
+        # return (torch.tanh(x_conv3)+1)/2
+        return x_conv3
 
 
 class ResidualBlocks2(nn.Module):
@@ -96,14 +97,21 @@ class Discriminator(nn.Module):
             ResidualBlocks2(512, 512, 2),
             )
 
-        self.fc = nn.Sequential(
-            nn.Linear(in_features=512*(math.ceil(HR_CROP_SIZE/16))**2, out_features=1024),
-            nn.LeakyReLU(),
-            nn.Linear(1024, 1)
+        # self.fc = nn.Sequential(
+        #     nn.Linear(in_features=512*(math.ceil(HR_CROP_SIZE/16))**2, out_features=1024),
+        #     nn.LeakyReLU(),
+        #     nn.Linear(1024, 1)
+        # )
+        self.conv2 = nn.Sequential(
+            nn.AdaptiveAvgPool2d(1),
+            nn.Conv2d(512, 1024, kernel_size=1),
+            nn.LeakyReLU(0.2),
+            nn.Conv2d(1024, 1, kernel_size=1)
         )
 
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv_block(x)
+        x = self.conv2(x)
         x = x.flatten(start_dim = 1)
-        return torch.sigmoid(self.fc(x))
+        return torch.sigmoid(x)
